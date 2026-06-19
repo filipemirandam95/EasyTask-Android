@@ -17,4 +17,6 @@ sealed class Screen(val route: String) {
     object GroupDetail : Screen("group/{groupId}") {
         fun createRoute(groupId: String) = "group/$groupId"
     }
+
+    object CreateTask : Screen("create_task")
 }

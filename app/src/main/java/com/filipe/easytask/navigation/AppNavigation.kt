@@ -86,6 +86,9 @@ fun AppNavigation() {
                 TasksScreen(
                     onNavigateToTaskDetail = { taskId ->
                         navController.navigate(Screen.TaskDetail.createRoute(taskId))
+                    },
+                    onCreateTask = {
+                        navController.navigate(Screen.CreateTask.route)
                     }
                 )
             }
@@ -127,6 +130,14 @@ fun AppNavigation() {
             ) { backStackEntry ->
                 val groupId = backStackEntry.arguments?.getString("groupId")
                 PlaceholderScreen("Detalhes do Grupo\nID: $groupId") {
+                    Button(onClick = { navController.popBackStack() }) {
+                        Text("Voltar")
+                    }
+                }
+            }
+
+            composable(Screen.CreateTask.route) {
+                PlaceholderScreen("Criar Tarefa") {
                     Button(onClick = { navController.popBackStack() }) {
                         Text("Voltar")
                     }

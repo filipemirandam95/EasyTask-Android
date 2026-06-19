@@ -124,4 +124,14 @@ object MockRepository {
     fun removeMember(groupId: String, userId: String) {
         mockGroupMembers[groupId]?.removeAll { it.userId == userId }
     }
+
+    // Função adicionada para registrar o criador como membro do grupo na hora da criação
+    fun addOwnerToGroup(groupId: String, userId: String, email: String) {
+        val newMember = Member(userId, groupId, email, "owner")
+        if (mockGroupMembers.containsKey(groupId)) {
+            mockGroupMembers[groupId]?.add(newMember)
+        } else {
+            mockGroupMembers[groupId] = mutableListOf(newMember)
+        }
+    }
 }

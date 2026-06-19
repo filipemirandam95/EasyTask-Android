@@ -25,9 +25,13 @@ import androidx.navigation.navArgument
 import com.filipe.easytask.ui.components.BottomNavBar
 import com.filipe.easytask.ui.screens.auth.LoginScreen
 import com.filipe.easytask.ui.screens.auth.RegisterScreen
+import com.filipe.easytask.ui.screens.creategroup.CreateGroupScreen
+import com.filipe.easytask.ui.screens.createtask.CreateTaskScreen
+import com.filipe.easytask.ui.screens.groupdetail.GroupDetailScreen
 import com.filipe.easytask.ui.screens.tabs.GroupsScreen
 import com.filipe.easytask.ui.screens.tabs.ProfileScreen
 import com.filipe.easytask.ui.screens.tabs.TasksScreen
+import com.filipe.easytask.ui.screens.taskdetail.TaskDetailScreen
 
 @Composable
 fun AppNavigation() {
@@ -114,45 +118,64 @@ fun AppNavigation() {
                 )
             }
 
-            // Telas Temporárias de Detalhes (mantidas da Etapa 2 para não quebrar a navegação)
             composable(
                 route = Screen.TaskDetail.route,
                 arguments = listOf(navArgument("taskId") { type = NavType.StringType })
             ) { backStackEntry ->
-                val taskId = backStackEntry.arguments?.getString("taskId")
-                PlaceholderScreen("Detalhes da Tarefa\nID: $taskId") {
-                    Button(onClick = { navController.popBackStack() }) {
-                        Text("Voltar")
-                    }
-                }
+                val taskId = backStackEntry.arguments?.getString("taskId") ?: return@composable
+
+                TaskDetailScreen(
+                    taskId = taskId,
+                    onBack = { navController.popBackStack() }
+                )
             }
 
             composable(
                 route = Screen.GroupDetail.route,
                 arguments = listOf(navArgument("groupId") { type = NavType.StringType })
             ) { backStackEntry ->
-                val groupId = backStackEntry.arguments?.getString("groupId")
-                PlaceholderScreen("Detalhes do Grupo\nID: $groupId") {
-                    Button(onClick = { navController.popBackStack() }) {
-                        Text("Voltar")
+                val groupId = backStackEntry.arguments?.getString("groupId") ?: return@composable
+
+                GroupDetailScreen(
+                    groupId = groupId,
+                    onBack = { navController.popBackStack() },
+                    onCreateTask = { id ->
+                        navController.navigate(Screen.CreateTask.createRoute(id))
+                    },
+                    onNavigateToTaskDetail = { taskId ->
+                        navController.navigate(Screen.TaskDetail.createRoute(taskId))
                     }
-                }
+                )
             }
 
-            composable(Screen.CreateTask.route) {
-                PlaceholderScreen("Criar Tarefa") {
-                    Button(onClick = { navController.popBackStack() }) {
-                        Text("Voltar")
+            composable(
+                route = Screen.CreateTask.route,
+                arguments = listOf(navArgument("groupId") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                })
+            ) { backStackEntry ->
+                val groupId = backStackEntry.arguments?.getString("groupId")
+
+                CreateTaskScreen(
+                    preselectedGroupId = groupId,
+                    onBack = { navController.popBackStack() },
+                    onTaskCreated = {
+                        // Volta para a tela anterior (pode ser a lista de tarefas ou os detalhes de grupo)
+                        navController.popBackStack()
                     }
-                }
+                )
             }
 
             composable(Screen.CreateGroup.route) {
-                PlaceholderScreen("Criar Grupo") {
-                    Button(onClick = { navController.popBackStack() }) {
-                        Text("Voltar")
+                CreateGroupScreen(
+                    onBack = { navController.popBackStack() },
+                    onGroupCreated = {
+                        // Volta para a listagem de grupos, forçando recomposição para carregar o novo dado
+                        navController.popBackStack()
                     }
-                }
+                )
             }
         }
     }

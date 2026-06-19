@@ -18,7 +18,11 @@ sealed class Screen(val route: String) {
         fun createRoute(groupId: String) = "group/$groupId"
     }
 
-    object CreateTask : Screen("create_task")
+    object CreateTask : Screen("create_task?groupId={groupId}") {
+        fun createRoute(groupId: String? = null) =
+            if (groupId != null) "create_task?groupId=$groupId"
+            else "create_task"
+    }
 
     object CreateGroup : Screen("create_group")
 }

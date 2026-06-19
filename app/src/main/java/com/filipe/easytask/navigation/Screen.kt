@@ -19,4 +19,7 @@ sealed class Screen(val route: String) {
     }
 
     object CreateTask : Screen("create_task")
+
+    object CreateGroup : Screen("create_group")
 }
+

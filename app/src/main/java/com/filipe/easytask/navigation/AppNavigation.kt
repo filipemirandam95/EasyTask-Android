@@ -97,6 +97,9 @@ fun AppNavigation() {
                 GroupsScreen(
                     onNavigateToGroupDetail = { groupId ->
                         navController.navigate(Screen.GroupDetail.createRoute(groupId))
+                    },
+                    onCreateGroup = {
+                        navController.navigate(Screen.CreateGroup.route)
                     }
                 )
             }
@@ -138,6 +141,14 @@ fun AppNavigation() {
 
             composable(Screen.CreateTask.route) {
                 PlaceholderScreen("Criar Tarefa") {
+                    Button(onClick = { navController.popBackStack() }) {
+                        Text("Voltar")
+                    }
+                }
+            }
+
+            composable(Screen.CreateGroup.route) {
+                PlaceholderScreen("Criar Grupo") {
                     Button(onClick = { navController.popBackStack() }) {
                         Text("Voltar")
                     }

@@ -18,6 +18,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.filipe.easytask.ui.screens.auth.LoginScreen
+import com.filipe.easytask.ui.screens.auth.RegisterScreen
 
 @Composable
 fun AppNavigation() {
@@ -26,22 +28,31 @@ fun AppNavigation() {
     NavHost(navController = navController, startDestination = Screen.Login.route) {
 
         composable(Screen.Login.route) {
-            PlaceholderScreen("Login Screen") {
-                Button(onClick = { navController.navigate(Screen.Tasks.route) }) {
-                    Text("Entrar (Ir para Tasks)")
+            LoginScreen(
+                onLoginSuccess = {
+                    // Limpa a pilha de navegação para que o usuário não volte pro login ao clicar em 'voltar'
+                    navController.navigate(Screen.Tasks.route) {
+                        popUpTo(Screen.Login.route) { inclusive = true }
+                    }
+                },
+                onNavigateToRegister = {
+                    navController.navigate(Screen.Register.route)
                 }
-                Button(onClick = { navController.navigate(Screen.Register.route) }) {
-                    Text("Ir para Register")
-                }
-            }
+            )
         }
 
         composable(Screen.Register.route) {
-            PlaceholderScreen("Register Screen") {
-                Button(onClick = { navController.popBackStack() }) {
-                    Text("Voltar para Login")
+            RegisterScreen(
+                onRegisterSuccess = {
+                    // Se o cadastro for sucesso, vai direto pra Home (Tasks)
+                    navController.navigate(Screen.Tasks.route) {
+                        popUpTo(Screen.Login.route) { inclusive = true }
+                    }
+                },
+                onNavigateBack = {
+                    navController.popBackStack()
                 }
-            }
+            )
         }
 
         composable(Screen.Tasks.route) {
